@@ -17,7 +17,7 @@ const levelConfig: LevelConfig = {
 		[4]: 1200,
 	},
 	seed: Date.now(),
-	speed: 1,
+	speed: 2,
 }
 
 const keyboardInput = createKeyboardUserInputBus(document.body)

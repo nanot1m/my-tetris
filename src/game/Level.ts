@@ -224,8 +224,8 @@ export function createLevel(
 			"rotate",
 			createUserInputHandler(() => {
 				const rotated = rotateTetrominoeCW(tetrominoeShape)
-				while (hasCollision(field, rotated, tetrominoePosition)) {
-					tetrominoePosition.y--
+				if (hasCollision(field, rotated, tetrominoePosition)) {
+					return
 				}
 				tetrominoeShape = rotated
 			}),
