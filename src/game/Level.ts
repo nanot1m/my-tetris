@@ -5,10 +5,11 @@ import {
 	TetrominoeType,
 	getTetrominoeShape,
 	createTetrominoeGenerator,
+	rotateTetrominoeCW,
 } from "./Tetrominoe"
 import { UserInputAction } from "./UserInput"
 
-const EmptyCell = -1
+export const EmptyCell = -1
 
 type FieldCell = TetrominoeType | typeof EmptyCell
 
@@ -29,16 +30,17 @@ function hasCollision(
 	tetrominoePosition: { x: number; y: number },
 ): boolean {
 	for (let y = 0; y < tetrominoeShape.length; y++) {
-		for (let x = 0; x < tetrominoeShape[y].length; x++) {
-			if (tetrominoeShape[y][x] !== 0) {
+		for (let x = 0; x < tetrominoeShape[y]!.length; x++) {
+			if (tetrominoeShape[y]![x] !== 0) {
 				const fieldY = tetrominoePosition.y + y
 				const fieldX = tetrominoePosition.x + x
 
-				if (fieldY >= field.length || fieldX >= field[0].length) {
+				if (fieldY >= field.length || fieldX >= field[0]!.length) {
 					return true
 				}
 
-				if (field[fieldY][fieldX] !== EmptyCell) {
+				const row = field[fieldY]
+				if (row && row[fieldX] !== EmptyCell) {
 					return true
 				}
 			}
@@ -58,17 +60,17 @@ function placeShape(
 
 	for (let y = 0; y < tetrominoeShape.length; y++) {
 		const fieldY = tetrominoePosition.y + y
-		for (let x = 0; x < tetrominoeShape[y].length; x++) {
+		for (let x = 0; x < tetrominoeShape[y]!.length; x++) {
 			const fieldX = tetrominoePosition.x + x
-			if (tetrominoeShape[y][x] !== 0) {
-				field[fieldY][fieldX] = tetrominoeType
+			if (tetrominoeShape[y]![x] !== 0) {
+				field[fieldY]![fieldX] = tetrominoeType
 			}
 		}
 
-		if (field[fieldY].every((cell) => cell !== EmptyCell)) {
+		if (field[fieldY]?.every((cell) => cell !== EmptyCell)) {
 			field.splice(fieldY, 1)
 			field.unshift(
-				Array.from({ length: field[0].length }, () => EmptyCell),
+				Array.from({ length: field[0]!.length }, () => EmptyCell),
 			)
 			burnedRows++
 		}
@@ -108,10 +110,11 @@ function simulateStep(
 
 type GameState = "playing" | "gameover" | "paused"
 
-interface LevelState {
+export interface LevelState {
 	field: FieldCell[][]
 	score: number
 	currentTetrominoe: TetrominoeType
+	tetrominoeShape: TetrominoeShape
 	tetrominoePosition: { x: number; y: number }
 	nextTetrominoes: TetrominoeType[]
 	state: GameState
@@ -148,7 +151,7 @@ function validateConfig(config: LevelConfig): asserts config is LevelConfig {
 	}
 }
 
-export function level(
+export function createLevel(
 	config: LevelConfig,
 	userInputBus: BusListener<UserInputAction>,
 	onNextLevelState: (level: LevelState) => void,
@@ -181,6 +184,7 @@ export function level(
 		score,
 		currentTetrominoe,
 		tetrominoePosition,
+		tetrominoeShape,
 		nextTetrominoes,
 		state,
 		speed,
@@ -219,7 +223,7 @@ export function level(
 		userInputBus.on(
 			"rotate",
 			createUserInputHandler(() => {
-				const rotated = getTetrominoeShape(currentTetrominoe)
+				const rotated = rotateTetrominoeCW(tetrominoeShape)
 				while (hasCollision(field, rotated, tetrominoePosition)) {
 					tetrominoePosition.y--
 				}
@@ -267,7 +271,7 @@ export function level(
 
 		if (result.type === "placed") {
 			totalBurnedRows += result.burnedRows
-			score += config.scoring[result.burnedRows]
+			score += config.scoring[result.burnedRows]!
 			currentTetrominoe = nextTetrominoes.shift()!
 			nextTetrominoes.push(tetrominoes.next().value)
 			tetrominoePosition = { x: centerX, y: 0 }
