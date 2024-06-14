@@ -1,24 +1,30 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import { createDomRenderer } from "./dom/DomRenderer"
+import { createKeyboardUserInputBus } from "./dom/KeyboardUserInput"
+import { LevelConfig, createLevel } from "./game/Level"
+import "./style.css"
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+const appNode = document.querySelector<HTMLDivElement>("#app")!
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+const levelConfig: LevelConfig = {
+	width: 10,
+	height: 20,
+	nextTetrominoesCount: 3,
+	scoring: {
+		[0]: 0,
+		[1]: 40,
+		[2]: 100,
+		[3]: 300,
+		[4]: 1200,
+	},
+	seed: Date.now(),
+	speed: 1,
+}
+
+const keyboardInput = createKeyboardUserInputBus(document.body)
+
+const renderer = createDomRenderer(appNode, levelConfig)
+const level = createLevel(levelConfig, keyboardInput.bus, (state) =>
+	renderer.onNextLevelState(state),
+)
+
+level.start()
