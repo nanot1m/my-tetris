@@ -100,7 +100,7 @@ export function rotateTetrominoeCW(
 
 	for (let i = 0; i < size; i++) {
 		for (let j = 0; j < size; j++) {
-			rotated[i][j] = tetrominoe[size - j - 1][i]
+			rotated[i]![j] = tetrominoe[size - j - 1]![i]
 		}
 	}
 
@@ -125,6 +125,6 @@ export function* createTetrominoeGenerator(
 			bag = [...TetrominoeTypes]
 		}
 		const index = rnd.nextInt(0, bag.length - 1)
-		yield bag.splice(index, 1)[0]
+		yield bag.splice(index, 1)[0]!
 	}
 }
