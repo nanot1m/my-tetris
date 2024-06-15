@@ -1,5 +1,5 @@
 import { createDomRenderer } from "./dom/DomRenderer"
-import { createKeyboardUserInputBus } from "./dom/KeyboardUserInput"
+import { createUserInputBus } from "./dom/KeyboardUserInput"
 import { LevelConfig, createLevel } from "./game/Level"
 import "./style.css"
 
@@ -20,7 +20,7 @@ const levelConfig: LevelConfig = {
 	speed: 2,
 }
 
-const keyboardInput = createKeyboardUserInputBus(document.body)
+const keyboardInput = createUserInputBus(document.body, 20)
 
 const renderer = createDomRenderer(appNode, levelConfig)
 const level = createLevel(levelConfig, keyboardInput.bus, (state) =>

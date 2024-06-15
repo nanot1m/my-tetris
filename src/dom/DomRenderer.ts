@@ -30,8 +30,8 @@ export function createDomRenderer(
 	scoreContainer.style.fontSize = "24px"
 	scoreContainer.style.fontWeight = "bold"
 	scoreContainer.style.fontFamily = "monospace"
-	scoreContainer.style.width = "80px"
 	scoreContainer.style.textAlign = "right"
+	scoreContainer.style.gridArea = "score"
 
 	const nextTetrominoesContainer = document.createElement("canvas")
 	nextTetrominoesContainer.width = 4 * cellSize
