@@ -172,8 +172,11 @@ export function createLevel(
 	}
 
 	let state = "playing" as GameState
-	let tetrominoePosition = { x: centerX, y: 0 }
 	let tetrominoeShape = getTetrominoeShape(currentTetrominoe)
+	let tetrominoePosition = {
+		x: centerX - Math.floor(tetrominoeShape.length / 2),
+		y: 0,
+	}
 	let speed = config.speed
 	let totalBurnedRows = 0
 
@@ -274,8 +277,11 @@ export function createLevel(
 			score += config.scoring[result.burnedRows]!
 			currentTetrominoe = nextTetrominoes.shift()!
 			nextTetrominoes.push(tetrominoes.next().value)
-			tetrominoePosition = { x: centerX, y: 0 }
 			tetrominoeShape = getTetrominoeShape(currentTetrominoe)
+			tetrominoePosition = {
+				x: centerX - Math.floor(tetrominoeShape[0]!.length / 2),
+				y: 0,
+			}
 		}
 
 		if (result.type === "falling") {
