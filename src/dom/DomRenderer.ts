@@ -16,7 +16,7 @@ const colors = {
 	[TetrominoeType.Z]: "#FF0000",
 }
 
-const cellSize = 20
+const cellSize = 21
 const previewCellSize = 15
 
 function adoptScreenPixelRatio(ctx: CanvasRenderingContext2D) {
@@ -98,12 +98,12 @@ export function createDomRenderer(
 		size: number,
 		ctx: CanvasRenderingContext2D,
 	) {
+		const color = colors[tetrominoeType]
 		for (let y = 0; y < tetrominoeShape.length; y++) {
 			const fieldY = tetrominoePosition.y + y
 			for (let x = 0; x < tetrominoeShape[y]!.length; x++) {
 				const fieldX = tetrominoePosition.x + x
 				if (tetrominoeShape[y]![x]) {
-					const color = colors[tetrominoeType]
 					renderTetrominoeCell(fieldX, fieldY, color, size, ctx)
 				}
 			}
@@ -123,10 +123,16 @@ export function createDomRenderer(
 		for (let y = 0; y < field.length; y++) {
 			for (let x = 0; x < field[y]!.length; x++) {
 				const color = colors[field[y]![x]!]
-				if (field[y]![x] !== EmptyCell) {
-					renderTetrominoeCell(x, y, color, cellSize, ctx)
-				} else {
+				if (field[y]![x] === EmptyCell) {
 					renderCell(x, y, color, cellSize, ctx)
+				}
+			}
+		}
+
+		for (let y = 0; y < field.length; y++) {
+			for (let x = 0; x < field[y]!.length; x++) {
+				if (field[y]![x] !== EmptyCell) {
+					renderTetrominoeCell(x, y, colors[field[y]![x]!], cellSize, ctx)
 				}
 			}
 		}
